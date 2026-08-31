@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Duyệt Đơn Nông Dân Phố</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>body { font-family: 'Inter', sans-serif; }</style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <!-- Màn hình Đăng nhập (Bảo mật bằng PIN) -->
+  <div id="loginScreen" class="flex items-center justify-center min-h-screen px-4">
+    <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-sm border">
+      <h2 class="text-xl font-bold text-gray-800 text-center mb-6">Đăng Nhập Quản Trị</h2>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-medium text-gray-700 mb-1">Tài khoản (User ID)</label>
+          <input type="text" id="adminUser" placeholder="admin_hieu" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-700 mb-1">Mã PIN / Mật khẩu</label>
+          <input type="password" id="adminPin" placeholder="••••••" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
+        </div>
+        <button onclick="loginAdmin()" id="btnLogin" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-lg transition">Đăng Nhập</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Giao diện Bảng điều khiển Quản trị -->
+  <div id="dashboardScreen" class="hidden">
+    <!-- Navbar -->
+    <header class="bg-white border-b px-6 py-4 flex justify-between items-center sticky top-0 z-10">
+      <div>
+        <h1 class="text-lg font-bold text-gray-800">Quản Lý Tuyển Sinh - Nông Dân Phố</h1>
+        <p class="text-xs text-gray-500">Xin chào: <span id="adminNameDisplay" class="font-semibold text-emerald-700"></span></p>
+      </div>
+      <div class="flex space-x-3">
+        <button onclick="loadOrders()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-medium px-3 py-2 rounded-lg border">Làm mới dữ liệu</button>
+        <button onclick="logout()" class="bg-red-50 hover:bg-red-100 text-red-600 text-xs font-medium px-3 py-2 rounded-lg">Đăng xuất</button>
+      </div>
+    </header>
+
+    <!-- Main Table -->
+    <main class="p-6 max-w-7xl mx-auto">
+      <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200 text-left text-xs">
+            <thead class="bg-gray-50 font-semibold text-gray-600 uppercase">
+              <tr>
+                <th class="p-3">Thời gian / Mã</th>
+                <th class="p-3">Học Viên</th>
+                <th class="p-3">Gói / Địa chỉ</th>
+                <th class="p-3">Học Phí</th>
+                <th class="p-3">Cú pháp CK</th>
+                <th class="p-3">CTV</th>
+                <th class="p-3">Trạng Thái</th>
+                <th class="p-3 text-center">Thao Tác</th>
+              </tr>
+            </thead>
+            <tbody id="orderList" class="divide-y divide-gray-100 font-normal">
+              <tr><td colspan="8" class="text-center py-6 text-gray-400">Đang tải dữ liệu...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // DÁN URL ỨNG DỤNG WEB APPS SCRIPT CỦA BẠN VÀO ĐÂY
+    const API_URL = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL";
+
+    let sessionAdmin = { userId: "", pin: "", name: "" };
+
+    async function loginAdmin() {
+      const user = document.getElementById("adminUser").value.trim();
+      const pin = document.getElementById("adminPin").value.trim();
+      if (!user || !pin) { alert("Vui lòng nhập đầy đủ thông tin"); return; }
+
+      const btn = document.getElementById("btnLogin");
+      btn.innerText = "Đang kiểm tra...";
+
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "ADMIN_LOGIN", userId: user, pin: pin })
+        });
+        const data = await res.json();
+        if (data.success) {
+          sessionAdmin = { userId: user, pin: pin, name: data.displayName };
+          document.getElementById("adminNameDisplay").innerText = data.displayName;
+          document.getElementById("loginScreen").classList.add("hidden");
+          document.getElementById("dashboardScreen").classList.remove("hidden");
+          loadOrders();
+        } else {
+          alert(data.message);
+        }
+      } catch (e) {
+        alert("Lỗi kết nối");
+      } finally {
+        btn.innerText = "Đăng Nhập";
+      }
+    }
+
+    async function loadOrders() {
+      const tbody = document.getElementById("orderList");
+      tbody.innerHTML = '<tr><td colspan="8" class="text-center py-6 text-gray-400">Đang đồng bộ từ Google Sheets...</td></tr>';
+
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "GET_ORDERS", userId: sessionAdmin.userId, pin: sessionAdmin.pin })
+        });
+        const data = await res.json();
+
+        if (!data.success) { alert(data.message); return; }
+
+        if (data.orders.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="8" class="text-center py-6 text-gray-400">Chưa có đơn đăng ký nào.</td></tr>';
+          return;
+        }
+
+        let html = "";
+        data.orders.forEach(o => {
+          let statusBadge = "";
+          if (o.status === "CHO_THANH_TOAN") {
+            statusBadge = '<span class="bg-gray-100 text-gray-600 px-2 py-0.5 rounded font-medium">Chờ thanh toán</span>';
+          } else if (o.status === "DA_BAO_CHUYEN_KHOAN") {
+            statusBadge = '<span class="bg-amber-100 text-amber-700 px-2 py-0.5 rounded font-semibold">Khách báo đã chuyển</span>';
+          } else if (o.status === "DA_DUYET") {
+            statusBadge = '<span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded font-semibold">Đã duyệt (Đã gửi mail)</span>';
+          }
+
+          let actionBtn = "";
+          if (o.status !== "DA_DUYET") {
+            actionBtn = `<button onclick="approveOrder('${o.orderId}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-md font-semibold text-xs transition">Duyệt Đơn</button>`;
+          } else {
+            actionBtn = `<span class="text-gray-400 italic">Hoàn tất</span>`;
+          }
+
+          html += `
+            <tr class="hover:bg-gray-50">
+              <td class="p-3"><div class="font-bold text-gray-800">${o.orderId}</div><div class="text-gray-400 text-[10px]">${o.createdAt}</div></td>
+              <td class="p-3"><div class="font-medium text-gray-900">${o.name}</div><div class="text-gray-500">${o.phone}</div><div class="text-gray-400 text-[10px]">${o.email}</div></td>
+              <td class="p-3"><div class="font-medium text-emerald-800">${o.combo}</div><div class="text-gray-500 text-[11px]">${o.address || 'Không nhận mẫu'}</div></td>
+              <td class="p-3 font-semibold text-gray-900">${Number(o.amount).toLocaleString('vi-VN')} đ</td>
+              <td class="p-3"><span class="bg-red-50 text-red-600 font-bold px-1.5 py-0.5 rounded">${o.code}</span></td>
+              <td class="p-3 text-gray-600">${o.ctv}</td>
+              <td class="p-3">${statusBadge}</td>
+              <td class="p-3 text-center">${actionBtn}</td>
+            </tr>
+          `;
+        });
+        tbody.innerHTML = html;
+      } catch (e) {
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center py-6 text-red-500">Lỗi tải dữ liệu. Vui lòng bấm làm mới.</td></tr>';
+      }
+    }
+
+    async function approveOrder(orderId) {
+      if (!confirm(`Bạn có chắc chắn muốn DUYỆT đơn [${orderId}]? Hệ thống sẽ gửi email lớp học cho học viên và email hoa hồng cho CTV ngay lập tức.`)) {
+        return;
+      }
+
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "APPROVE_ORDER",
+            orderId: orderId,
+            userId: sessionAdmin.userId,
+            pin: sessionAdmin.pin,
+            adminName: sessionAdmin.name
+          })
+        });
+        const data = await res.json();
+        alert(data.message);
+        loadOrders();
+      } catch (e) {
+        alert("Lỗi kết nối máy chủ");
+      }
+    }
+
+    function logout() {
+      sessionAdmin = { userId: "", pin: "", name: "" };
+      document.getElementById("dashboardScreen").classList.add("hidden");
+      document.getElementById("loginScreen").classList.remove("hidden");
+    }
+  </script>
+</body>
+</html>
