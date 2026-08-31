@@ -3,190 +3,181 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin - Duyệt Đơn Nông Dân Phố</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>body { font-family: 'Inter', sans-serif; }</style>
+  <title>Admin Portal - Nông Dân Phố</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f0f2f5; margin: 0; padding: 20px; }
+    .box { max-width: 1200px; margin: auto; background: #fff; border-radius: 8px; padding: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    h2 { margin-top: 0; color: #1b5e20; }
+    .login-wrap { max-width: 400px; margin: 80px auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+    input[type="password"], input[type="text"] { width: 100%; padding: 10px; margin: 10px 0 16px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+    button { background: #2e7d32; color: #fff; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+    button:hover { background: #1b5e20; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 13px; }
+    th, td { border: 1px solid #e0e0e0; padding: 10px 8px; text-align: left; }
+    th { background: #f5f5f5; }
+    .badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; }
+    .badge-pending { background: #fff3e0; color: #e65100; }
+    .badge-paid { background: #e3f2fd; color: #0277bd; }
+    .badge-success { background: #e8f5e9; color: #2e7d32; }
+    .btn-approve { background: #0288d1; padding: 6px 12px; font-size: 12px; }
+    .btn-approve:hover { background: #0277bd; }
+    .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+  </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
-  <!-- Màn hình Đăng nhập (Bảo mật bằng PIN) -->
-  <div id="loginScreen" class="flex items-center justify-center min-h-screen px-4">
-    <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-sm border">
-      <h2 class="text-xl font-bold text-gray-800 text-center mb-6">Đăng Nhập Quản Trị</h2>
-      <div class="space-y-4">
-        <div>
-          <label class="block text-xs font-medium text-gray-700 mb-1">Tài khoản (User ID)</label>
-          <input type="text" id="adminUser" placeholder="admin_hieu" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
-        </div>
-        <div>
-          <label class="block text-xs font-medium text-gray-700 mb-1">Mã PIN / Mật khẩu</label>
-          <input type="password" id="adminPin" placeholder="••••••" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
-        </div>
-        <button onclick="loginAdmin()" id="btnLogin" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-lg transition">Đăng Nhập</button>
-      </div>
+<body>
+
+<!-- FORM ĐĂNG NHẬP -->
+<div id="loginSection" class="login-wrap">
+  <h3 style="margin-top:0; text-align:center;">QUẢN TRỊ VIÊN</h3>
+  <label>Nhập mật khẩu quản trị:</label>
+  <input type="password" id="adminPass" placeholder="••••••••">
+  <button style="width:100%;" onclick="adminLogin()">ĐĂNG NHẬP</button>
+  <div id="loginErr" style="color:red; font-size:13px; margin-top:10px;"></div>
+</div>
+
+<!-- MÀN HÌNH QUẢN TRỊ -->
+<div id="mainSection" class="box" style="display: none;">
+  <div class="toolbar">
+    <h2>DANH SÁCH ĐĂNG KÝ HỌC VIÊN</h2>
+    <div>
+      <button onclick="loadOrders()" style="background:#546e7a;">Làm mới</button>
+      <button onclick="logout()" style="background:#c62828; margin-left:8px;">Đăng xuất</button>
     </div>
   </div>
 
-  <!-- Giao diện Bảng điều khiển Quản trị -->
-  <div id="dashboardScreen" class="hidden">
-    <!-- Navbar -->
-    <header class="bg-white border-b px-6 py-4 flex justify-between items-center sticky top-0 z-10">
-      <div>
-        <h1 class="text-lg font-bold text-gray-800">Quản Lý Tuyển Sinh - Nông Dân Phố</h1>
-        <p class="text-xs text-gray-500">Xin chào: <span id="adminNameDisplay" class="font-semibold text-emerald-700"></span></p>
-      </div>
-      <div class="flex space-x-3">
-        <button onclick="loadOrders()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-medium px-3 py-2 rounded-lg border">Làm mới dữ liệu</button>
-        <button onclick="logout()" class="bg-red-50 hover:bg-red-100 text-red-600 text-xs font-medium px-3 py-2 rounded-lg">Đăng xuất</button>
-      </div>
-    </header>
-
-    <!-- Main Table -->
-    <main class="p-6 max-w-7xl mx-auto">
-      <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
-        <div class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-gray-200 text-left text-xs">
-            <thead class="bg-gray-50 font-semibold text-gray-600 uppercase">
-              <tr>
-                <th class="p-3">Thời gian / Mã</th>
-                <th class="p-3">Học Viên</th>
-                <th class="p-3">Gói / Địa chỉ</th>
-                <th class="p-3">Học Phí</th>
-                <th class="p-3">Cú pháp CK</th>
-                <th class="p-3">CTV</th>
-                <th class="p-3">Trạng Thái</th>
-                <th class="p-3 text-center">Thao Tác</th>
-              </tr>
-            </thead>
-            <tbody id="orderList" class="divide-y divide-gray-100 font-normal">
-              <tr><td colspan="8" class="text-center py-6 text-gray-400">Đang tải dữ liệu...</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </main>
+  <div style="overflow-x:auto;">
+    <table id="ordersTable">
+      <thead>
+        <tr>
+          <th>Mã Đơn</th>
+          <th>Thời Gian</th>
+          <th>Họ Tên</th>
+          <th>SĐT / Email</th>
+          <th>Gói Đăng Ký</th>
+          <th>Số Tiền</th>
+          <th>Mã Chuyển Khoản</th>
+          <th>Đối Tác</th>
+          <th>Trạng Thái</th>
+          <th>Thao Tác</th>
+        </tr>
+      </thead>
+      <tbody id="ordersBody"></tbody>
+    </table>
   </div>
+</div>
 
-  <script>
-    // DÁN URL ỨNG DỤNG WEB APPS SCRIPT CỦA BẠN VÀO ĐÂY
-    const API_URL = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL";
+<script>
+  // DÁN URL WEB APP APPS SCRIPT VÀO ĐÂY
+  const SCRIPT_URL = "PASTE_YOUR_APPS_SCRIPT_URL_HERE";
+  let currentPassword = "";
 
-    let sessionAdmin = { userId: "", pin: "", name: "" };
+  async function adminLogin() {
+    const pass = document.getElementById('adminPass').value;
+    const err = document.getElementById('loginErr');
+    err.innerText = "Đang xác thực...";
 
-    async function loginAdmin() {
-      const user = document.getElementById("adminUser").value.trim();
-      const pin = document.getElementById("adminPin").value.trim();
-      if (!user || !pin) { alert("Vui lòng nhập đầy đủ thông tin"); return; }
-
-      const btn = document.getElementById("btnLogin");
-      btn.innerText = "Đang kiểm tra...";
-
-      try {
-        const res = await fetch(API_URL, {
-          method: "POST",
-          body: JSON.stringify({ action: "ADMIN_LOGIN", userId: user, pin: pin })
-        });
-        const data = await res.json();
-        if (data.success) {
-          sessionAdmin = { userId: user, pin: pin, name: data.displayName };
-          document.getElementById("adminNameDisplay").innerText = data.displayName;
-          document.getElementById("loginScreen").classList.add("hidden");
-          document.getElementById("dashboardScreen").classList.remove("hidden");
-          loadOrders();
-        } else {
-          alert(data.message);
-        }
-      } catch (e) {
-        alert("Lỗi kết nối");
-      } finally {
-        btn.innerText = "Đăng Nhập";
+    try {
+      const res = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: "ADMIN_LOGIN", password: pass })
+      });
+      const data = await res.json();
+      if (data.success) {
+        currentPassword = pass;
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('mainSection').style.display = 'block';
+        loadOrders();
+      } else {
+        err.innerText = data.message;
       }
+    } catch (e) {
+      err.innerText = "Lỗi kết nối: " + e;
     }
+  }
 
-    async function loadOrders() {
-      const tbody = document.getElementById("orderList");
-      tbody.innerHTML = '<tr><td colspan="8" class="text-center py-6 text-gray-400">Đang đồng bộ từ Google Sheets...</td></tr>';
+  async function loadOrders() {
+    const tbody = document.getElementById('ordersBody');
+    tbody.innerHTML = "<tr><td colspan='10' style='text-align:center;'>Đang tải dữ liệu...</td></tr>";
 
-      try {
-        const res = await fetch(API_URL, {
-          method: "POST",
-          body: JSON.stringify({ action: "GET_ORDERS", userId: sessionAdmin.userId, pin: sessionAdmin.pin })
-        });
-        const data = await res.json();
+    try {
+      const res = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: "ADMIN_GET_ORDERS", password: currentPassword })
+      });
+      const data = await res.json();
 
-        if (!data.success) { alert(data.message); return; }
-
+      if (data.success) {
         if (data.orders.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="8" class="text-center py-6 text-gray-400">Chưa có đơn đăng ký nào.</td></tr>';
+          tbody.innerHTML = "<tr><td colspan='10' style='text-align:center;'>Chưa có đơn đăng ký nào.</td></tr>";
           return;
         }
 
-        let html = "";
-        data.orders.forEach(o => {
-          let statusBadge = "";
-          if (o.status === "CHO_THANH_TOAN") {
-            statusBadge = '<span class="bg-gray-100 text-gray-600 px-2 py-0.5 rounded font-medium">Chờ thanh toán</span>';
-          } else if (o.status === "DA_BAO_CHUYEN_KHOAN") {
-            statusBadge = '<span class="bg-amber-100 text-amber-700 px-2 py-0.5 rounded font-semibold">Khách báo đã chuyển</span>';
-          } else if (o.status === "DA_DUYET") {
-            statusBadge = '<span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded font-semibold">Đã duyệt (Đã gửi mail)</span>';
-          }
+        tbody.innerHTML = data.orders.map(o => {
+          let badgeClass = 'badge-pending';
+          if (o.status === 'Khách báo đã chuyển') badgeClass = 'badge-paid';
+          if (o.status === 'Đã duyệt thành công') badgeClass = 'badge-success';
 
-          let actionBtn = "";
-          if (o.status !== "DA_DUYET") {
-            actionBtn = `<button onclick="approveOrder('${o.orderId}')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-md font-semibold text-xs transition">Duyệt Đơn</button>`;
+          let actionBtn = '';
+          if (o.status !== 'Đã duyệt thành công') {
+            actionBtn = `<button class="btn-approve" onclick="approveOrder('${o.orderId}')">Duyệt & Gửi Mail</button>`;
           } else {
-            actionBtn = `<span class="text-gray-400 italic">Hoàn tất</span>`;
+            actionBtn = `<span style="color:#2e7d32; font-weight:bold;">✓ Đã gửi</span>`;
           }
 
-          html += `
-            <tr class="hover:bg-gray-50">
-              <td class="p-3"><div class="font-bold text-gray-800">${o.orderId}</div><div class="text-gray-400 text-[10px]">${o.createdAt}</div></td>
-              <td class="p-3"><div class="font-medium text-gray-900">${o.name}</div><div class="text-gray-500">${o.phone}</div><div class="text-gray-400 text-[10px]">${o.email}</div></td>
-              <td class="p-3"><div class="font-medium text-emerald-800">${o.combo}</div><div class="text-gray-500 text-[11px]">${o.address || 'Không nhận mẫu'}</div></td>
-              <td class="p-3 font-semibold text-gray-900">${Number(o.amount).toLocaleString('vi-VN')} đ</td>
-              <td class="p-3"><span class="bg-red-50 text-red-600 font-bold px-1.5 py-0.5 rounded">${o.code}</span></td>
-              <td class="p-3 text-gray-600">${o.ctv}</td>
-              <td class="p-3">${statusBadge}</td>
-              <td class="p-3 text-center">${actionBtn}</td>
+          return `
+            <tr>
+              <td><strong>${o.orderId}</strong></td>
+              <td>${o.createdAt}</td>
+              <td><strong>${o.fullName}</strong></td>
+              <td>${o.phone}<br><small>${o.email}</small></td>
+              <td>${o.comboName}</td>
+              <td style="color:#c62828; font-weight:bold;">${Number(o.amount).toLocaleString('vi-VN')}đ</td>
+              <td><code style="background:#eee; padding:2px 4px; border-radius:4px;">${o.transferCode}</code></td>
+              <td><span style="font-weight:bold; color:#0288d1;">${o.refCode}</span></td>
+              <td><span class="badge ${badgeClass}">${o.status}</span></td>
+              <td>${actionBtn}</td>
             </tr>
           `;
-        });
-        tbody.innerHTML = html;
-      } catch (e) {
-        tbody.innerHTML = '<tr><td colspan="8" class="text-center py-6 text-red-500">Lỗi tải dữ liệu. Vui lòng bấm làm mới.</td></tr>';
+        }).join('');
       }
+    } catch (e) {
+      alert("Lỗi tải đơn hàng: " + e);
     }
+  }
 
-    async function approveOrder(orderId) {
-      if (!confirm(`Bạn có chắc chắn muốn DUYỆT đơn [${orderId}]? Hệ thống sẽ gửi email lớp học cho học viên và email hoa hồng cho CTV ngay lập tức.`)) {
-        return;
-      }
+  async function approveOrder(orderId) {
+    if (!confirm(`Xác nhận duyệt đơn [${orderId}] và gửi mail kích hoạt cho học viên?`)) return;
 
-      try {
-        const res = await fetch(API_URL, {
-          method: "POST",
-          body: JSON.stringify({
-            action: "APPROVE_ORDER",
-            orderId: orderId,
-            userId: sessionAdmin.userId,
-            pin: sessionAdmin.pin,
-            adminName: sessionAdmin.name
-          })
-        });
-        const data = await res.json();
-        alert(data.message);
+    try {
+      const res = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          action: "ADMIN_APPROVE",
+          password: currentPassword,
+          orderId: orderId,
+          approverName: "Admin"
+        })
+      });
+      const data = await res.json();
+      alert(data.message);
+      if (data.success) {
         loadOrders();
-      } catch (e) {
-        alert("Lỗi kết nối máy chủ");
       }
+    } catch (e) {
+      alert("Lỗi duyệt đơn: " + e);
     }
+  }
 
-    function logout() {
-      sessionAdmin = { userId: "", pin: "", name: "" };
-      document.getElementById("dashboardScreen").classList.add("hidden");
-      document.getElementById("loginScreen").classList.remove("hidden");
-    }
-  </script>
+  function logout() {
+    currentPassword = "";
+    document.getElementById('adminPass').value = "";
+    document.getElementById('mainSection').style.display = 'none';
+    document.getElementById('loginSection').style.display = 'block';
+  }
+</script>
+
 </body>
 </html>
