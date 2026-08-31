@@ -4,219 +4,229 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Đăng Ký Khóa Học - Nông Dân Phố</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>body { font-family: 'Inter', sans-serif; }</style>
+  <style>
+    :root { --primary: #2e7d32; --primary-hover: #1b5e20; --bg: #f4f6f8; }
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: var(--bg); margin: 0; padding: 20px; color: #333; }
+    .container { max-width: 550px; margin: auto; background: #fff; border-radius: 12px; padding: 28px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+    h1 { font-size: 20px; color: var(--primary); text-align: center; margin-bottom: 6px; text-transform: uppercase; line-height: 1.4; }
+    .subtitle { text-align: center; color: #666; font-size: 14px; margin-bottom: 24px; }
+    .form-group { margin-bottom: 18px; }
+    label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+    .req { color: #d32f2f; }
+    input[type="text"], input[type="tel"], input[type="email"] {
+      width: 100%; padding: 12px 14px; border: 1.5px solid #dcdfe6; border-radius: 8px; font-size: 15px; outline: none; transition: border-color 0.2s;
+    }
+    input:focus { border-color: var(--primary); }
+    .combo-card {
+      border: 1.5px solid #e0e0e0; border-radius: 8px; padding: 12px 16px; margin-bottom: 10px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; transition: all 0.2s;
+    }
+    .combo-card:hover { border-color: var(--primary); background: #f9fbf9; }
+    .combo-card.active { border-color: var(--primary); background: #e8f5e9; font-weight: 600; }
+    .combo-card input { margin-right: 10px; }
+    .price-tag { color: #c62828; font-weight: 700; }
+    .btn-submit {
+      width: 100%; background: var(--primary); color: #fff; padding: 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.2s; margin-top: 10px;
+    }
+    .btn-submit:hover { background: var(--primary-hover); }
+    .btn-submit:disabled { background: #a5d6a7; cursor: not-allowed; }
+    
+    /* Payment Screen */
+    #paymentSection { display: none; text-align: center; }
+    .qr-img { width: 100%; max-width: 320px; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.1); margin: 15px auto; }
+    .bank-info { background: #fafafa; border: 1px dashed #ccc; border-radius: 8px; padding: 14px; text-align: left; font-size: 14px; line-height: 1.8; margin-bottom: 18px; }
+    .btn-paid { background: #0288d1; }
+    .btn-paid:hover { background: #0277bd; }
+    .status-msg { margin-top: 12px; font-size: 14px; font-weight: bold; }
+  </style>
 </head>
-<body class="bg-gray-50 min-h-screen py-10 px-4 sm:px-6 lg:px-8">
-  <div class="max-w-xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
-    <!-- Header -->
-    <div class="bg-emerald-700 py-8 px-6 text-center text-white">
-      <span class="inline-block bg-emerald-800 text-emerald-100 text-xs px-3 py-1 rounded-full font-semibold mb-2">ĐÀO TẠO NÔNG NGHIỆP TẠI NHÀ</span>
-      <h1 class="text-2xl font-bold uppercase tracking-wide">Nông Dân Phố</h1>
-      <p class="text-emerald-100 mt-1 font-medium">Tự Chủ Vườn Nấm Sạch Tại Nhà</p>
-      <div id="ctvBadge" class="hidden mt-3 text-xs bg-emerald-900 text-emerald-200 py-1 px-3 rounded-full inline-block"></div>
-    </div>
+<body>
 
-    <!-- Màn hình Form -->
-    <div id="formSection" class="p-6 sm:p-8 space-y-6">
-      <div>
-        <label class="block text-sm font-semibold text-gray-700 mb-2">1. Chọn combo thực hành đi kèm:</label>
-        <div class="space-y-3">
-          <label class="flex items-start p-3 border rounded-xl cursor-pointer hover:bg-emerald-50 transition border-gray-200">
-            <input type="radio" name="combo" value="CB_01" checked class="mt-1 text-emerald-600 focus:ring-emerald-500" onchange="toggleAddressField(false)">
-            <div class="ml-3 flex-1">
-              <span class="block text-sm font-medium text-gray-900">Không lấy combo thực hành</span>
-              <span class="block text-sm font-semibold text-emerald-600">369.000 VNĐ</span>
-            </div>
-          </label>
+<div class="container">
+  <!-- MÀN HÌNH 1: FORM ĐĂNG KÝ -->
+  <div id="formSection">
+    <h1>Nông Dân Phố</h1>
+    <div class="subtitle">Tự Chủ Vườn Nấm Sạch Tại Nhà</div>
 
-          <label class="flex items-start p-3 border rounded-xl cursor-pointer hover:bg-emerald-50 transition border-gray-200">
-            <input type="radio" name="combo" value="CB_02" class="mt-1 text-emerald-600 focus:ring-emerald-500" onchange="toggleAddressField(true)">
-            <div class="ml-3 flex-1">
-              <span class="block text-sm font-medium text-gray-900">Combo meo giống và giá thể</span>
-              <span class="block text-sm font-semibold text-emerald-600">439.000 VNĐ</span>
-            </div>
-          </label>
+    <form id="regForm" onsubmit="handleRegister(event)">
+      <div class="form-group">
+        <label>Chọn gói Combo thực hành: <span class="req">*</span></label>
+        
+        <label class="combo-card active" onclick="selectCombo(this, 'G1', 369000, 'Không lấy combo thực hành', false)">
+          <div><input type="radio" name="combo" value="G1" checked> Không lấy combo thực hành</div>
+          <span class="price-tag">369.000đ</span>
+        </label>
 
-          <label class="flex items-start p-3 border rounded-xl cursor-pointer hover:bg-emerald-50 transition border-gray-200">
-            <input type="radio" name="combo" value="CB_03" class="mt-1 text-emerald-600 focus:ring-emerald-500" onchange="toggleAddressField(true)">
-            <div class="ml-3 flex-1">
-              <span class="block text-sm font-medium text-gray-900">Combo nấm linh chi nghiền bột 250gr (làm vang)</span>
-              <span class="block text-sm font-semibold text-emerald-600">639.000 VNĐ</span>
-            </div>
-          </label>
+        <label class="combo-card" onclick="selectCombo(this, 'G2', 439000, 'Combo meo giống và giá thể', true)">
+          <div><input type="radio" name="combo" value="G2"> Combo meo giống và giá thể</div>
+          <span class="price-tag">439.000đ</span>
+        </label>
 
-          <label class="flex items-start p-3 border rounded-xl cursor-pointer hover:bg-emerald-50 transition border-gray-200">
-            <input type="radio" name="combo" value="CB_04" class="mt-1 text-emerald-600 focus:ring-emerald-500" onchange="toggleAddressField(true)">
-            <div class="ml-3 flex-1">
-              <span class="block text-sm font-medium text-gray-900">Combo nấm linh chi 250gr + meo giống và giá thể</span>
-              <span class="block text-sm font-semibold text-emerald-600">659.000 VNĐ</span>
-            </div>
-          </label>
-        </div>
+        <label class="combo-card" onclick="selectCombo(this, 'G3', 639000, 'Combo nấm linh chi nghiền bột 250gr (làm vang)', true)">
+          <div><input type="radio" name="combo" value="G3"> Combo nấm linh chi bột 250g</div>
+          <span class="price-tag">639.000đ</span>
+        </label>
+
+        <label class="combo-card" onclick="selectCombo(this, 'G4', 659000, 'Combo nấm linh chi nghiền bột 250gr và meo giống và giá thể', true)">
+          <div><input type="radio" name="combo" value="G4"> Combo nấm linh chi bột + meo & giá thể</div>
+          <span class="price-tag">659.000đ</span>
+        </label>
       </div>
 
-      <div class="space-y-4">
-        <label class="block text-sm font-semibold text-gray-700">2. Điền thông tin học viên:</label>
-        <div>
-          <label class="block text-xs font-medium text-gray-600 mb-1">Họ và tên *</label>
-          <input type="text" id="fullName" placeholder="Ví dụ: Trần Minh Mẫn" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
-        </div>
-        <div>
-          <label class="block text-xs font-medium text-gray-600 mb-1">Số điện thoại (Zalo) *</label>
-          <input type="tel" id="phone" placeholder="Ví dụ: 0909099099" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
-        </div>
-        <div>
-          <label class="block text-xs font-medium text-gray-600 mb-1">Địa chỉ Email nhận thông tin nhập học *</label>
-          <input type="email" id="email" placeholder="email@domain.com" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
-        </div>
-        <div id="addressContainer" class="hidden">
-          <label class="block text-xs font-medium text-gray-600 mb-1">Địa chỉ nhận mẫu phôi / combo thực hành <span class="text-red-500">*</span></label>
-          <input type="text" id="address" placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh thành" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none">
-        </div>
+      <div class="form-group">
+        <label>Họ và Tên: <span class="req">*</span></label>
+        <input type="text" id="fullName" placeholder="Ví dụ: Trần Minh Mẫn" required>
       </div>
 
-      <button onclick="submitRegistration()" id="submitBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3.5 px-4 rounded-xl shadow-md transition flex items-center justify-center space-x-2">
-        <span>Đăng ký & Nhận mã thanh toán</span>
-      </button>
-    </div>
-
-    <!-- Màn hình Thanh toán QR -->
-    <div id="paymentSection" class="hidden p-6 sm:p-8 space-y-6 text-center">
-      <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 text-amber-900 text-sm">
-        Vui lòng quét mã QR chuyển khoản chính xác nội dung bên dưới để hệ thống kích hoạt tự động.
+      <div class="form-group">
+        <label>Số Điện Thoại: <span class="req">*</span></label>
+        <input type="tel" id="phone" placeholder="Ví dụ: 0909099099" required pattern="[0-9]{9,11}">
       </div>
 
-      <div class="bg-gray-50 p-4 rounded-xl inline-block border shadow-sm">
-        <img id="qrImage" src="" alt="Mã QR VietQR" class="w-64 h-64 object-contain mx-auto rounded-lg">
+      <div class="form-group">
+        <label>Địa Chỉ Email: <span class="req">*</span></label>
+        <input type="email" id="email" placeholder="Để nhận link lớp học và Meet" required>
       </div>
 
-      <div class="text-left bg-gray-50 p-4 rounded-xl border space-y-2 text-sm">
-        <div class="flex justify-between"><span class="text-gray-500">Gói đã chọn:</span><span id="txtCombo" class="font-semibold text-gray-800"></span></div>
-        <div class="flex justify-between"><span class="text-gray-500">Số tiền:</span><span id="txtAmount" class="font-bold text-emerald-600 text-base"></span></div>
-        <div class="flex justify-between"><span class="text-gray-500">Ngân hàng:</span><span class="font-medium text-gray-800">Techcombank</span></div>
-        <div class="flex justify-between"><span class="text-gray-500">Số tài khoản:</span><span class="font-bold text-gray-800 tracking-wider">19022423550011</span></div>
-        <div class="flex justify-between"><span class="text-gray-500">Chủ tài khoản:</span><span class="font-bold text-gray-800">HO HOANG HIEU</span></div>
-        <div class="flex justify-between items-center pt-2 border-t"><span class="text-gray-500">Nội dung CK:</span><span id="txtTransferCode" class="font-bold text-red-600 bg-red-50 px-2 py-1 rounded text-base"></span></div>
+      <div class="form-group" id="addressGroup" style="display: none;">
+        <label>Địa Chỉ Nhận Mẫu Combo: <span class="req">*</span></label>
+        <input type="text" id="address" placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/TP">
       </div>
 
-      <button onclick="confirmPaymentDone()" id="doneBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition">
-        Tôi Đã Thanh Toán
-      </button>
-    </div>
-
-    <!-- Màn hình Hoàn tất -->
-    <div id="successSection" class="hidden p-8 text-center space-y-4">
-      <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">✓</div>
-      <h2 class="text-xl font-bold text-gray-800">Hệ Thống Đã Tiếp Nhận!</h2>
-      <p class="text-gray-600 text-sm leading-relaxed">
-        Cảm ơn bạn. Bộ phận hỗ trợ của <strong>Nông Dân Phố</strong> sẽ kiểm tra đối soát giao dịch và phê duyệt trong thời gian sớm nhất.<br>
-        Thông tin link nhóm Zalo và lớp học sẽ được tự động gửi qua email của bạn ngay sau khi hoàn tất duyệt.
-      </p>
-    </div>
+      <button type="submit" class="btn-submit" id="submitBtn">ĐĂNG KÝ VÀ THANH TOÁN</button>
+    </form>
   </div>
 
-  <script>
-    // DÁN URL ỨNG DỤNG WEB APPS SCRIPT CỦA BẠN VÀO ĐÂY
-    const API_URL = "https://script.google.com/macros/s/AKfycbzeGZ_09lVnsM9XWtZ79OkeXRSBCJEswVNvLGtjdpDVkTuEE8Pg0cTiS2csSIHOvCNg/exec";
+  <!-- MÀN HÌNH 2: THANH TOÁN QR -->
+  <div id="paymentSection">
+    <h2 style="color: var(--primary); margin-top:0;">THÔNG TIN THANH TOÁN</h2>
+    <p style="font-size: 14px; color: #555;">Quét mã QR dưới đây qua ứng dụng Ngân hàng để thanh toán nhanh:</p>
+    
+    <img id="qrImage" class="qr-img" src="" alt="Mã QR Chuyển Khoản">
 
-    let currentOrderId = "";
-    let currentRef = "";
+    <div class="bank-info">
+      <div>Ngân hàng: <strong>Techcombank (TCB)</strong></div>
+      <div>Số tài khoản: <strong>19022423550011</strong></div>
+      <div>Chủ tài khoản: <strong>HO HOANG HIEU</strong></div>
+      <div>Số tiền: <strong id="payAmount" style="color: #c62828;"></strong></div>
+      <div>Nội dung CK: <strong id="payCode" style="color: #2e7d32;"></strong></div>
+    </div>
 
-    window.onload = function() {
-      const urlParams = new URLSearchParams(window.location.search);
-      currentRef = urlParams.get('ref') || "";
-      if (currentRef) {
-        const badge = document.getElementById("ctvBadge");
-        badge.innerText = "Mã giới thiệu CTV: " + currentRef.toUpperCase();
-        badge.classList.remove("hidden");
-      }
+    <button class="btn-submit btn-paid" id="btnPaid" onclick="confirmPayment()">TÔI ĐÃ CHUYỂN KHOẢN THÀNH CÔNG</button>
+    <div id="paidStatus" class="status-msg"></div>
+  </div>
+</div>
+
+<script>
+  // DÁN URL WEB APP APPS SCRIPT VÀO ĐÂY
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzvvc4iVVYRTMGPkArUCcSyMickzh_zdZzoV-SjtpmW_1c8CLfBYXhalarBdtQtVO1oMg/exec";
+
+  let selectedCombo = {
+    code: 'G1',
+    amount: 369000,
+    name: 'Không lấy combo thực hành',
+    requireAddress: false
+  };
+
+  let currentOrder = null;
+
+  // Lấy mã Ref từ URL (?ref=tt)
+  const urlParams = new URLSearchParams(window.location.search);
+  const refCode = urlParams.get('ref') || 'organic';
+
+  function selectCombo(el, code, amount, name, reqAddr) {
+    document.querySelectorAll('.combo-card').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    el.querySelector('input').checked = true;
+
+    selectedCombo = { code, amount, name, requireAddress: reqAddr };
+    
+    const addrGroup = document.getElementById('addressGroup');
+    const addrInput = document.getElementById('address');
+    if (reqAddr) {
+      addrGroup.style.display = 'block';
+      addrInput.required = true;
+    } else {
+      addrGroup.style.display = 'none';
+      addrInput.required = false;
+      addrInput.value = '';
+    }
+  }
+
+  async function handleRegister(e) {
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerText = "Đang tạo đơn & mã thanh toán...";
+
+    const payload = {
+      action: "REGISTER",
+      fullName: document.getElementById('fullName').value.trim(),
+      phone: document.getElementById('phone').value.trim(),
+      email: document.getElementById('email').value.trim(),
+      address: document.getElementById('address').value.trim(),
+      comboCode: selectedCombo.code,
+      comboName: selectedCombo.name,
+      amount: selectedCombo.amount,
+      refCode: refCode
     };
 
-    function toggleAddressField(isRequired) {
-      const addrDiv = document.getElementById("addressContainer");
-      if (isRequired) {
-        addrDiv.classList.remove("hidden");
+    try {
+      const res = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        currentOrder = data;
+        document.getElementById('formSection').style.display = 'none';
+        document.getElementById('paymentSection').style.display = 'block';
+        document.getElementById('qrImage').src = data.qrUrl;
+        document.getElementById('payAmount').innerText = data.amount.toLocaleString('vi-VN') + ' VNĐ';
+        document.getElementById('payCode').innerText = data.transferCode;
       } else {
-        addrDiv.classList.add("hidden");
-        document.getElementById("address").value = "";
-      }
-    }
-
-    async function submitRegistration() {
-      const fullName = document.getElementById("fullName").value.trim();
-      const phone = document.getElementById("phone").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const address = document.getElementById("address").value.trim();
-      const combo = document.querySelector('input[name="combo"]:checked').value;
-
-      if (!fullName || !phone || !email) {
-        alert("Vui lòng điền đầy đủ Họ tên, Số điện thoại và Email.");
-        return;
-      }
-
-      if (combo !== "CB_01" && !address) {
-        alert("Vui lòng nhập địa chỉ nhận mẫu để nông trại gửi vật tư cho bạn.");
-        return;
-      }
-
-      const btn = document.getElementById("submitBtn");
-      btn.disabled = true;
-      btn.innerText = "Đang tạo mã thanh toán...";
-
-      try {
-        const payload = {
-          action: "REGISTER",
-          fullName: fullName,
-          phone: phone,
-          email: email,
-          address: address,
-          comboId: combo,
-          ref: currentRef
-        };
-
-        const res = await fetch(API_URL, {
-          method: "POST",
-          body: JSON.stringify(payload)
-        });
-        const result = await res.json();
-
-        if (result.success) {
-          currentOrderId = result.orderId;
-          document.getElementById("qrImage").src = result.qrUrl;
-          document.getElementById("txtCombo").innerText = result.comboName;
-          document.getElementById("txtAmount").innerText = Number(result.totalAmount).toLocaleString('vi-VN') + " VNĐ";
-          document.getElementById("txtTransferCode").innerText = result.transferCode;
-
-          document.getElementById("formSection").classList.add("hidden");
-          document.getElementById("paymentSection").classList.remove("hidden");
-        } else {
-          alert("Lỗi: " + result.message);
-        }
-      } catch (err) {
-        alert("Không thể kết nối đến máy chủ. Vui lòng thử lại!");
-      } finally {
+        alert("Có lỗi: " + data.message);
         btn.disabled = false;
-        btn.innerText = "Đăng ký & Nhận mã thanh toán";
+        btn.innerText = "ĐĂNG KÝ VÀ THANH TOÁN";
       }
+    } catch (err) {
+      alert("Lỗi kết nối máy chủ: " + err);
+      btn.disabled = false;
+      btn.innerText = "ĐĂNG KÝ VÀ THANH TOÁN";
     }
+  }
 
-    async function confirmPaymentDone() {
-      const btn = document.getElementById("doneBtn");
-      btn.disabled = true;
-      btn.innerText = "Đang ghi nhận...";
+  async function confirmPayment() {
+    if (!currentOrder) return;
+    const btn = document.getElementById('btnPaid');
+    const msg = document.getElementById('paidStatus');
+    btn.disabled = true;
+    btn.innerText = "Đang ghi nhận...";
 
-      try {
-        const payload = { action: "CONFIRM_PAYMENT", orderId: currentOrderId };
-        await fetch(API_URL, { method: "POST", body: JSON.stringify(payload) });
-        
-        document.getElementById("paymentSection").classList.add("hidden");
-        document.getElementById("successSection").classList.remove("hidden");
-      } catch (e) {
-        alert("Có lỗi xảy ra, nhưng hệ thống vẫn đang ghi nhận thanh toán của bạn.");
+    try {
+      const res = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: "CONFIRM_PAID", orderId: currentOrder.orderId })
+      });
+      const data = await res.json();
+      if (data.success) {
+        msg.style.color = "#2e7d32";
+        msg.innerHTML = "✓ Đã ghi nhận chuyển khoản! Ban quản trị sẽ kiểm tra và gửi email xác nhận cùng Link lớp học cho bạn sớm nhất.";
+        btn.style.display = "none";
+      } else {
+        alert(data.message);
+        btn.disabled = false;
+        btn.innerText = "TÔI ĐÃ CHUYỂN KHOẢN THÀNH CÔNG";
       }
+    } catch (e) {
+      alert("Lỗi kết nối: " + e);
+      btn.disabled = false;
     }
-  </script>
+  }
+</script>
+
 </body>
 </html>
