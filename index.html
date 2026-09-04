@@ -3,230 +3,220 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Đăng Ký Khóa Học - Nông Dân Phố</title>
+  <title>Nông Dân Phố: Tự Chủ Vườn Nấm Sạch Tại Nhà</title>
   <style>
-    :root { --primary: #2e7d32; --primary-hover: #1b5e20; --bg: #f4f6f8; }
-    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: var(--bg); margin: 0; padding: 20px; color: #333; }
-    .container { max-width: 550px; margin: auto; background: #fff; border-radius: 12px; padding: 28px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
-    h1 { font-size: 20px; color: var(--primary); text-align: center; margin-bottom: 6px; text-transform: uppercase; line-height: 1.4; }
-    .subtitle { text-align: center; color: #666; font-size: 14px; margin-bottom: 24px; }
-    .form-group { margin-bottom: 18px; }
-    label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 6px; }
-    .req { color: #d32f2f; }
-    input[type="text"], input[type="tel"], input[type="email"] {
-      width: 100%; padding: 12px 14px; border: 1.5px solid #dcdfe6; border-radius: 8px; font-size: 15px; outline: none; transition: border-color 0.2s;
+    :root {
+      --primary: #003E99;
+      --bg: #F8FAFC;
+      --accent: #FF7A00;
+      --text: #1E293B;
+      --border: #E2E8F0;
     }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); line-height: 1.6; padding-bottom: 50px; }
+    .header { background: var(--primary); color: white; padding: 35px 20px; text-align: center; box-shadow: 0 4px 10px rgba(0,62,153,0.15); }
+    .header h1 { font-size: 24px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .header p { margin-top: 8px; opacity: 0.9; font-size: 15px; }
+    .container { max-width: 650px; margin: -20px auto 0; padding: 0 16px; }
+    .card { background: white; border-radius: 12px; padding: 24px; border: 1px solid var(--border); box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+    .section-title { font-size: 17px; font-weight: bold; color: var(--primary); margin-bottom: 14px; border-left: 4px solid var(--accent); padding-left: 8px; }
+    .combo-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+    .combo-item { border: 2px solid var(--border); border-radius: 8px; padding: 14px; cursor: pointer; transition: 0.2s; display: flex; justify-content: space-between; align-items: center; }
+    .combo-item:hover { border-color: #93C5FD; }
+    .combo-item.selected { border-color: var(--primary); background: #EFF6FF; }
+    .combo-name { font-weight: 600; font-size: 15px; }
+    .combo-price { font-weight: 700; color: var(--accent); font-size: 16px; }
+    .form-group { margin-bottom: 16px; }
+    label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+    input { width: 100%; padding: 12px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; }
     input:focus { border-color: var(--primary); }
-    .combo-card {
-      border: 1.5px solid #e0e0e0; border-radius: 8px; padding: 12px 16px; margin-bottom: 10px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; transition: all 0.2s;
-    }
-    .combo-card:hover { border-color: var(--primary); background: #f9fbf9; }
-    .combo-card.active { border-color: var(--primary); background: #e8f5e9; font-weight: 600; }
-    .combo-card input { margin-right: 10px; }
-    .price-tag { color: #c62828; font-weight: 700; }
-    .btn-submit {
-      width: 100%; background: var(--primary); color: #fff; padding: 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.2s; margin-top: 10px;
-    }
-    .btn-submit:hover { background: var(--primary-hover); }
-    .btn-submit:disabled { background: #a5d6a7; cursor: not-allowed; }
-    
-    /* Payment Screen */
-    #paymentSection { display: none; text-align: center; }
-    .qr-img { width: 100%; max-width: 320px; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.1); margin: 15px auto; }
-    .bank-info { background: #fafafa; border: 1px dashed #ccc; border-radius: 8px; padding: 14px; text-align: left; font-size: 14px; line-height: 1.8; margin-bottom: 18px; }
-    .btn-paid { background: #0288d1; }
-    .btn-paid:hover { background: #0277bd; }
-    .status-msg { margin-top: 12px; font-size: 14px; font-weight: bold; }
+    .btn-submit { width: 100%; background: var(--accent); color: white; border: none; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(255,122,0,0.3); }
+    .btn-submit:hover { background: #E66E00; }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+    /* Modal Thanh Toán */
+    #paymentModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 100; padding: 16px; }
+    .modal-content { background: white; border-radius: 12px; max-width: 480px; width: 100%; padding: 24px; text-align: center; max-height: 90vh; overflow-y: auto; }
+    .qr-img { width: 230px; height: 230px; margin: 12px auto; display: block; border: 1px solid var(--border); border-radius: 8px; }
+    .bank-info { background: #F8FAFC; border: 1px dashed var(--primary); border-radius: 8px; padding: 12px; text-align: left; font-size: 14px; margin: 12px 0; }
+    .btn-paid { background: #16A34A; color: white; width: 100%; padding: 12px; border-radius: 8px; border: none; font-size: 15px; font-weight: bold; cursor: pointer; }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <!-- MÀN HÌNH 1: FORM ĐĂNG KÝ -->
-  <div id="formSection">
+  <div class="header">
     <h1>Nông Dân Phố</h1>
-    <div class="subtitle">Tự Chủ Vườn Nấm Sạch Tại Nhà</div>
-
-    <form id="regForm" onsubmit="handleRegister(event)">
-      <div class="form-group">
-        <label>Chọn gói Combo thực hành: <span class="req">*</span></label>
-        
-        <label class="combo-card active" onclick="selectCombo(this, 'G1', 369000, 'Không lấy combo thực hành', false)">
-          <div><input type="radio" name="combo" value="G1" checked> Không lấy combo thực hành</div>
-          <span class="price-tag">369.000đ</span>
-        </label>
-
-        <label class="combo-card" onclick="selectCombo(this, 'G2', 439000, 'Combo meo giống và giá thể', true)">
-          <div><input type="radio" name="combo" value="G2"> Combo meo giống và giá thể</div>
-          <span class="price-tag">439.000đ</span>
-        </label>
-
-        <label class="combo-card" onclick="selectCombo(this, 'G3', 639000, 'Combo nấm linh chi nghiền bột 250gr (làm vang)', true)">
-          <div><input type="radio" name="combo" value="G3"> Combo nấm linh chi bột 250g</div>
-          <span class="price-tag">639.000đ</span>
-        </label>
-
-        <label class="combo-card" onclick="selectCombo(this, 'G4', 659000, 'Combo nấm linh chi nghiền bột 250gr và meo giống và giá thể', true)">
-          <div><input type="radio" name="combo" value="G4"> Combo nấm linh chi bột + meo & giá thể</div>
-          <span class="price-tag">659.000đ</span>
-        </label>
-      </div>
-
-      <div class="form-group">
-        <label>Họ và Tên: <span class="req">*</span></label>
-        <input type="text" id="fullName" placeholder="Ví dụ: Trần Minh Mẫn" required>
-      </div>
-
-      <div class="form-group">
-        <label>Số Điện Thoại: <span class="req">*</span></label>
-        <input type="tel" id="phone" placeholder="Ví dụ: 0909099099" required pattern="[0-9]{9,11}">
-      </div>
-
-      <div class="form-group">
-        <label>Địa Chỉ Email: <span class="req">*</span></label>
-        <input type="email" id="email" placeholder="Để nhận link lớp học và Meet" required>
-      </div>
-
-      <div class="form-group" id="addressGroup" style="display: none;">
-        <label>Địa Chỉ Nhận Mẫu Combo: <span class="req">*</span></label>
-        <input type="text" id="address" placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/TP">
-      </div>
-
-      <button type="submit" class="btn-submit" id="submitBtn">ĐĂNG KÝ VÀ THANH TOÁN</button>
-    </form>
+    <p>Tự Chủ Vườn Nấm Sạch Tại Nhà</p>
   </div>
 
-  <!-- MÀN HÌNH 2: THANH TOÁN QR -->
-  <div id="paymentSection">
-    <h2 style="color: var(--primary); margin-top:0;">THÔNG TIN THANH TOÁN</h2>
-    <p style="font-size: 14px; color: #555;">Quét mã QR dưới đây qua ứng dụng Ngân hàng để thanh toán nhanh:</p>
-    
-    <img id="qrImage" class="qr-img" src="" alt="Mã QR Chuyển Khoản">
+  <div class="container">
+    <div class="card">
+      <form id="regForm">
+        <div class="section-title">BƯỚC 1: CHỌN GÓI THỰC HÀNH</div>
+        <div class="combo-list">
+          <div class="combo-item selected" onclick="selectCombo('CB01', 369000, false, this)">
+            <div>
+              <div class="combo-name">Không lấy combo thực hành</div>
+              <small style="color: #64748B;">Học lý thuyết & tài liệu trực tuyến</small>
+            </div>
+            <div class="combo-price">369.000đ</div>
+          </div>
+          <div class="combo-item" onclick="selectCombo('CB02', 439000, true, this)">
+            <div>
+              <div class="combo-name">Combo meo giống và giá thể</div>
+              <small style="color: #64748B;">Bộ nguyên liệu chuẩn bị sẵn tại nhà</small>
+            </div>
+            <div class="combo-price">439.000đ</div>
+          </div>
+          <div class="combo-item" onclick="selectCombo('CB03', 639000, true, this)">
+            <div>
+              <div class="combo-name">Combo nấm linh chi nghiền bột 250gr</div>
+              <small style="color: #64748B;">Dược liệu làm vang nấm</small>
+            </div>
+            <div class="combo-price">639.000đ</div>
+          </div>
+          <div class="combo-item" onclick="selectCombo('CB04', 659000, true, this)">
+            <div>
+              <div class="combo-name">Combo linh chi 250gr + meo giống & giá thể</div>
+              <small style="color: #64748B;">Trọn gói đầy đủ thực hành</small>
+            </div>
+            <div class="combo-price">659.000đ</div>
+          </div>
+        </div>
 
-    <div class="bank-info">
-      <div>Ngân hàng: <strong>Techcombank (TCB)</strong></div>
-      <div>Số tài khoản: <strong>19022423550011</strong></div>
-      <div>Chủ tài khoản: <strong>HO HOANG HIEU</strong></div>
-      <div>Số tiền: <strong id="payAmount" style="color: #c62828;"></strong></div>
-      <div>Nội dung CK: <strong id="payCode" style="color: #2e7d32;"></strong></div>
+        <div class="section-title">BƯỚC 2: THÔNG TIN HỌC VIÊN</div>
+        <div class="form-group">
+          <label>Họ và tên *</label>
+          <input type="text" id="hoTen" required placeholder="Ví dụ: Trần Minh Mẫn">
+        </div>
+        <div class="form-group">
+          <label>Số điện thoại *</label>
+          <input type="tel" id="sdt" required placeholder="Ví dụ: 0909099099">
+        </div>
+        <div class="form-group">
+          <label>Địa chỉ Email * (để nhận link lớp học)</label>
+          <input type="email" id="email" required placeholder="Ví dụ: minhman@gmail.com">
+        </div>
+        <div class="form-group" id="groupDiaChi" style="display: none;">
+          <label>Địa chỉ nhận mẫu *</label>
+          <input type="text" id="diaChi" placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành">
+        </div>
+
+        <button type="submit" class="btn-submit" id="btnSubmit">ĐĂNG KÝ VÀ THANH TOÁN</button>
+      </form>
     </div>
-
-    <button class="btn-submit btn-paid" id="btnPaid" onclick="confirmPayment()">TÔI ĐÃ CHUYỂN KHOẢN THÀNH CÔNG</button>
-    <div id="paidStatus" class="status-msg"></div>
   </div>
-</div>
 
-<script>
-  // DÁN URL WEB APP APPS SCRIPT VÀO ĐÂY
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzvvc4iVVYRTMGPkArUCcSyMickzh_zdZzoV-SjtpmW_1c8CLfBYXhalarBdtQtVO1oMg/exec";
+  <!-- Modal Thanh Toán -->
+  <div id="paymentModal">
+    <div class="modal-content">
+      <h3 style="color: var(--primary);">QUÉT MÃ QR THANH TOÁN</h3>
+      <p style="font-size: 14px; margin-top: 4px;">Mở ứng dụng ngân hàng bất kỳ để quét mã</p>
+      
+      <img id="qrImage" class="qr-img" src="" alt="Mã VietQR">
 
-  let selectedCombo = {
-    code: 'G1',
-    amount: 369000,
-    name: 'Không lấy combo thực hành',
-    requireAddress: false
-  };
+      <div class="bank-info">
+        <p><strong>Ngân hàng:</strong> <span id="txtBank">Techcombank</span></p>
+        <p><strong>Số tài khoản:</strong> <span id="txtSTK" style="font-weight: bold; color: var(--primary);">19022423550011</span></p>
+        <p><strong>Chủ tài khoản:</strong> <span id="txtOwner">HO HOANG HIEU</span></p>
+        <p><strong>Số tiền:</strong> <span id="txtAmount" style="font-weight: bold; color: var(--accent);">0đ</span></p>
+        <p><strong>Nội dung CK:</strong> <span id="txtMemo" style="font-weight: bold; color: #DC2626; font-size: 15px;"></span></p>
+      </div>
+      <p style="font-size: 12px; color: #64748B; margin-bottom: 12px;">* Hệ thống tự động ghi nhận ngay sau khi bạn hoàn tất chuyển khoản.</p>
+      <button class="btn-paid" id="btnConfirmPaid" onclick="confirmPayment()">TÔI ĐÃ THANH TOÁN THÀNH CÔNG</button>
+    </div>
+  </div>
 
-  let currentOrder = null;
+  <script>
+    // DÁN LINK GOOGLE APPS SCRIPT CỦA BẠN VÀO ĐÂY:
+    const API_URL = "https://script.google.com/macros/s/AKfycbw292L8mWlPkiqEf_1lOfJoyElYMzft8wWClutM8V18P-27zJuGIJdKx4qHxWlf42Oq/exec";
 
-  // Lấy mã Ref từ URL (?ref=tt)
-  const urlParams = new URLSearchParams(window.location.search);
-  const refCode = urlParams.get('ref') || 'organic';
+    let selectedGoi = { id: 'CB01', price: 369000, needAddress: false };
+    let currentOrder = null;
 
-  function selectCombo(el, code, amount, name, reqAddr) {
-    document.querySelectorAll('.combo-card').forEach(c => c.classList.remove('active'));
-    el.classList.add('active');
-    el.querySelector('input').checked = true;
+    // Đọc mã ref đối tác từ URL (?ref=tt)
+    const urlParams = new URLSearchParams(window.location.search);
+    const refCode = urlParams.get('ref') || '';
 
-    selectedCombo = { code, amount, name, requireAddress: reqAddr };
-    
-    const addrGroup = document.getElementById('addressGroup');
-    const addrInput = document.getElementById('address');
-    if (reqAddr) {
-      addrGroup.style.display = 'block';
-      addrInput.required = true;
-    } else {
-      addrGroup.style.display = 'none';
-      addrInput.required = false;
-      addrInput.value = '';
-    }
-  }
+    function selectCombo(id, price, needAddress, elem) {
+      selectedGoi = { id, price, needAddress };
+      document.querySelectorAll('.combo-item').forEach(el => el.classList.remove('selected'));
+      elem.classList.add('selected');
 
-  async function handleRegister(e) {
-    e.preventDefault();
-    const btn = document.getElementById('submitBtn');
-    btn.disabled = true;
-    btn.innerText = "Đang tạo đơn & mã thanh toán...";
-
-    const payload = {
-      action: "REGISTER",
-      fullName: document.getElementById('fullName').value.trim(),
-      phone: document.getElementById('phone').value.trim(),
-      email: document.getElementById('email').value.trim(),
-      address: document.getElementById('address').value.trim(),
-      comboCode: selectedCombo.code,
-      comboName: selectedCombo.name,
-      amount: selectedCombo.amount,
-      refCode: refCode
-    };
-
-    try {
-      const res = await fetch(SCRIPT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(payload)
-      });
-      const data = await res.json();
-
-      if (data.success) {
-        currentOrder = data;
-        document.getElementById('formSection').style.display = 'none';
-        document.getElementById('paymentSection').style.display = 'block';
-        document.getElementById('qrImage').src = data.qrUrl;
-        document.getElementById('payAmount').innerText = data.amount.toLocaleString('vi-VN') + ' VNĐ';
-        document.getElementById('payCode').innerText = data.transferCode;
+      const groupDiaChi = document.getElementById('groupDiaChi');
+      const inputDiaChi = document.getElementById('diaChi');
+      if (needAddress) {
+        groupDiaChi.style.display = 'block';
+        inputDiaChi.required = true;
       } else {
-        alert("Có lỗi: " + data.message);
+        groupDiaChi.style.display = 'none';
+        inputDiaChi.required = false;
+        inputDiaChi.value = '';
+      }
+    }
+
+    document.getElementById('regForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSubmit');
+      btn.disabled = true;
+      btn.innerText = "Đang kết nối cổng thanh toán...";
+
+      const payload = {
+        action: "register",
+        hoTen: document.getElementById('hoTen').value.trim(),
+        sdt: document.getElementById('sdt').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        diaChi: document.getElementById('diaChi').value.trim(),
+        maGoi: selectedGoi.id,
+        ref: refCode
+      };
+
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        
+        if (data.status === "success") {
+          currentOrder = data;
+          document.getElementById('qrImage').src = data.qrUrl;
+          document.getElementById('txtBank').innerText = data.nganHang;
+          document.getElementById('txtSTK').innerText = data.soTaiKhoan;
+          document.getElementById('txtOwner').innerText = data.chuTaiKhoan;
+          document.getElementById('txtAmount').innerText = data.soTien.toLocaleString('vi-VN') + " đ";
+          document.getElementById('txtMemo').innerText = data.noiDungCK;
+          
+          document.getElementById('paymentModal').style.display = 'flex';
+        } else {
+          alert("Lỗi: " + data.message);
+        }
+      } catch (err) {
+        alert("Lỗi kết nối máy chủ! Vui lòng thử lại sau.");
+      } finally {
         btn.disabled = false;
         btn.innerText = "ĐĂNG KÝ VÀ THANH TOÁN";
       }
-    } catch (err) {
-      alert("Lỗi kết nối máy chủ: " + err);
-      btn.disabled = false;
-      btn.innerText = "ĐĂNG KÝ VÀ THANH TOÁN";
-    }
-  }
+    });
 
-  async function confirmPayment() {
-    if (!currentOrder) return;
-    const btn = document.getElementById('btnPaid');
-    const msg = document.getElementById('paidStatus');
-    btn.disabled = true;
-    btn.innerText = "Đang ghi nhận...";
+    async function confirmPayment() {
+      if (!currentOrder) return;
+      const btn = document.getElementById('btnConfirmPaid');
+      btn.disabled = true;
+      btn.innerText = "Đang ghi nhận...";
 
-    try {
-      const res = await fetch(SCRIPT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ action: "CONFIRM_PAID", orderId: currentOrder.orderId })
-      });
-      const data = await res.json();
-      if (data.success) {
-        msg.style.color = "#2e7d32";
-        msg.innerHTML = "✓ Đã ghi nhận chuyển khoản! Ban quản trị sẽ kiểm tra và gửi email xác nhận cùng Link lớp học cho bạn sớm nhất.";
-        btn.style.display = "none";
-      } else {
-        alert(data.message);
-        btn.disabled = false;
-        btn.innerText = "TÔI ĐÃ CHUYỂN KHOẢN THÀNH CÔNG";
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: "confirm_payment", maDon: currentOrder.maDon })
+        });
+        const data = await res.json();
+        alert("Đã ghi nhận! Ban quản lý sẽ xác thực và gửi link lớp học qua Email cho bạn trong ít phút.");
+        document.getElementById('paymentModal').style.display = 'none';
+        document.getElementById('regForm').reset();
+      } catch (e) {
+        alert("Có lỗi khi cập nhật, nhưng thông tin chuyển tiền của bạn đã được ghi nhận.");
       }
-    } catch (e) {
-      alert("Lỗi kết nối: " + e);
-      btn.disabled = false;
     }
-  }
-</script>
-
+  </script>
 </body>
 </html>
