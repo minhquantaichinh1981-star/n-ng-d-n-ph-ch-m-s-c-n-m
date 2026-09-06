@@ -163,3 +163,37 @@
   </script>
 </body>
 </html>
+async function login() {
+  const u = document.getElementById('adminUser').value;
+  const p = document.getElementById('adminPass').value;
+  
+  if (!u || !p) {
+    alert("Vui lòng nhập đầy đủ tài khoản và mật khẩu!");
+    return;
+  }
+
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: {
+        // Gửi dạng text/plain để tránh kích hoạt CORS Preflight OPTIONS của trình duyệt
+        'Content-Type': 'text/plain;charset=utf-8' 
+      },
+      body: JSON.stringify({ action: "admin_login", username: u, password: p })
+    });
+    
+    const data = await res.json();
+    if (data.status === "success") {
+      auth.user = u; 
+      auth.pass = p;
+      document.getElementById('loginModal').style.display = 'none';
+      document.getElementById('mainContent').style.display = 'block';
+      loadOrders();
+    } else {
+      alert(data.message);
+    }
+  } catch (e) {
+    console.error("Chi tiết lỗi:", e);
+    alert("Không thể kết nối đến máy chủ. Hãy kiểm tra lại API_URL hoặc phân quyền Web App.");
+  }
+}
