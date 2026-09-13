@@ -3,219 +3,327 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nông Dân Phố: Tự Chủ Vườn Nấm Sạch Tại Nhà</title>
+  <title>Đăng Ký Khóa Học - Nấm Phố</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #003E99;
-      --bg: #F8FAFC;
-      --accent: #FF7A00;
-      --text: #1E293B;
+      --primary: #003E99;    /* 60% Chủ đạo */
+      --bg: #F8FAFC;         /* 30% Nền & đệm */
+      --accent: #FF7A00;     /* 10% Điểm nhấn CTA */
+      --text: #0F172A;
+      --text-muted: #64748B;
+      --white: #FFFFFF;
       --border: #E2E8F0;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); line-height: 1.6; padding-bottom: 50px; }
-    .header { background: var(--primary); color: white; padding: 35px 20px; text-align: center; box-shadow: 0 4px 10px rgba(0,62,153,0.15); }
-    .header h1 { font-size: 24px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .header p { margin-top: 8px; opacity: 0.9; font-size: 15px; }
-    .container { max-width: 650px; margin: -20px auto 0; padding: 0 16px; }
-    .card { background: white; border-radius: 12px; padding: 24px; border: 1px solid var(--border); box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
-    .section-title { font-size: 17px; font-weight: bold; color: var(--primary); margin-bottom: 14px; border-left: 4px solid var(--accent); padding-left: 8px; }
-    .combo-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
-    .combo-item { border: 2px solid var(--border); border-radius: 8px; padding: 14px; cursor: pointer; transition: 0.2s; display: flex; justify-content: space-between; align-items: center; }
-    .combo-item:hover { border-color: #93C5FD; }
-    .combo-item.selected { border-color: var(--primary); background: #EFF6FF; }
-    .combo-name { font-weight: 600; font-size: 15px; }
-    .combo-price { font-weight: 700; color: var(--accent); font-size: 16px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding-bottom: 60px; }
+    
+    /* Header */
+    header {
+      background-color: var(--primary);
+      color: var(--white);
+      text-align: center;
+      padding: 36px 20px;
+    }
+    header h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; line-height: 1.3; }
+    header p { font-size: 15px; opacity: 0.9; }
+
+    /* Form Container */
+    .container {
+      max-width: 580px;
+      margin: -24px auto 0;
+      background: var(--white);
+      border-radius: 16px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+      padding: 28px;
+      border: 1px solid var(--border);
+    }
+    
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Option Cards */
+    .combo-group { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+    .combo-card {
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s ease;
+    }
+    .combo-card:hover { border-color: #94A3B8; }
+    .combo-card.active {
+      border-color: var(--primary);
+      background-color: #EFF6FF;
+    }
+    .combo-info { display: flex; flex-direction: column; gap: 4px; }
+    .combo-title { font-size: 14px; font-weight: 600; }
+    .combo-price { font-size: 15px; font-weight: 700; color: var(--accent); }
+    
+    /* Form Inputs */
     .form-group { margin-bottom: 16px; }
-    label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; }
-    input { width: 100%; padding: 12px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; }
-    input:focus { border-color: var(--primary); }
-    .btn-submit { width: 100%; background: var(--accent); color: white; border: none; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(255,122,0,0.3); }
-    .btn-submit:hover { background: #E66E00; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+    .form-group input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+    .form-group input:focus { border-color: var(--primary); }
+    .hidden { display: none; }
+
+    /* Button */
+    .btn-submit {
+      width: 100%;
+      background-color: var(--accent);
+      color: var(--white);
+      border: none;
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+      margin-top: 10px;
+    }
+    .btn-submit:hover { opacity: 0.92; }
     .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
-    /* Modal Thanh Toán */
-    #paymentModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 100; padding: 16px; }
-    .modal-content { background: white; border-radius: 12px; max-width: 480px; width: 100%; padding: 24px; text-align: center; max-height: 90vh; overflow-y: auto; }
-    .qr-img { width: 230px; height: 230px; margin: 12px auto; display: block; border: 1px solid var(--border); border-radius: 8px; }
-    .bank-info { background: #F8FAFC; border: 1px dashed var(--primary); border-radius: 8px; padding: 12px; text-align: left; font-size: 14px; margin: 12px 0; }
-    .btn-paid { background: #16A34A; color: white; width: 100%; padding: 12px; border-radius: 8px; border: none; font-size: 15px; font-weight: bold; cursor: pointer; }
+
+    /* Modal VietQR */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      z-index: 999;
+    }
+    .modal-box {
+      background: var(--white);
+      border-radius: 16px;
+      max-width: 440px;
+      width: 100%;
+      padding: 24px;
+      text-align: center;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .qr-img { width: 100%; max-width: 280px; margin: 16px auto; display: block; border-radius: 8px; border: 1px solid var(--border); }
+    .payment-details {
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 13px;
+      text-align: left;
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+    .btn-done {
+      width: 100%;
+      background-color: var(--primary);
+      color: var(--white);
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <h1>Nông Dân Phố</h1>
-    <p>Tự Chủ Vườn Nấm Sạch Tại Nhà</p>
-  </div>
+  <header>
+    <h1>Nấm Phố: Tự Chủ Vườn Nấm Sạch Tại Nhà</h1>
+    <p>Giải pháp tự trồng & thực hành nấm dược liệu chuẩn sinh học</p>
+  </header>
 
   <div class="container">
-    <div class="card">
-      <form id="regForm">
-        <div class="section-title">BƯỚC 1: CHỌN GÓI THỰC HÀNH</div>
-        <div class="combo-list">
-          <div class="combo-item selected" onclick="selectCombo('CB01', 369000, false, this)">
-            <div>
-              <div class="combo-name">Không lấy combo thực hành</div>
-              <small style="color: #64748B;">Học lý thuyết & tài liệu trực tuyến</small>
-            </div>
-            <div class="combo-price">369.000đ</div>
-          </div>
-          <div class="combo-item" onclick="selectCombo('CB02', 439000, true, this)">
-            <div>
-              <div class="combo-name">Combo meo giống và giá thể</div>
-              <small style="color: #64748B;">Bộ nguyên liệu chuẩn bị sẵn tại nhà</small>
-            </div>
-            <div class="combo-price">439.000đ</div>
-          </div>
-          <div class="combo-item" onclick="selectCombo('CB03', 639000, true, this)">
-            <div>
-              <div class="combo-name">Combo nấm linh chi nghiền bột 250gr</div>
-              <small style="color: #64748B;">Dược liệu làm vang nấm</small>
-            </div>
-            <div class="combo-price">639.000đ</div>
-          </div>
-          <div class="combo-item" onclick="selectCombo('CB04', 659000, true, this)">
-            <div>
-              <div class="combo-name">Combo linh chi 250gr + meo giống & giá thể</div>
-              <small style="color: #64748B;">Trọn gói đầy đủ thực hành</small>
-            </div>
-            <div class="combo-price">659.000đ</div>
-          </div>
+    <div class="section-title">1. Chọn combo học tập</div>
+    <div class="combo-group">
+      <div class="combo-card active" onclick="selectCombo(1, 350000, 'Nấm Phố: Tự Chủ Nấm Sạch Tại Nhà (không combo thực hành)')">
+        <div class="combo-info">
+          <div class="combo-title">Gói 1: Không combo thực hành</div>
+          <div class="combo-price">350.000 VNĐ</div>
         </div>
-
-        <div class="section-title">BƯỚC 2: THÔNG TIN HỌC VIÊN</div>
-        <div class="form-group">
-          <label>Họ và tên *</label>
-          <input type="text" id="hoTen" required placeholder="Ví dụ: Trần Minh Mẫn">
+      </div>
+      <div class="combo-card" onclick="selectCombo(2, 600000, 'Nấm Phố: Tự Chủ Nấm Sạch Tại Nhà và 1 lọ cao LC thực hành vang')">
+        <div class="combo-info">
+          <div class="combo-title">Gói 2: Kèm 1 lọ cao LC thực hành vang</div>
+          <div class="combo-price">600.000 VNĐ</div>
         </div>
-        <div class="form-group">
-          <label>Số điện thoại *</label>
-          <input type="tel" id="sdt" required placeholder="Ví dụ: 0909099099">
-        </div>
-        <div class="form-group">
-          <label>Địa chỉ Email * (để nhận link lớp học)</label>
-          <input type="email" id="email" required placeholder="Ví dụ: minhman@gmail.com">
-        </div>
-        <div class="form-group" id="groupDiaChi" style="display: none;">
-          <label>Địa chỉ nhận mẫu *</label>
-          <input type="text" id="diaChi" placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành">
-        </div>
-
-        <button type="submit" class="btn-submit" id="btnSubmit">ĐĂNG KÝ VÀ THANH TOÁN</button>
-      </form>
+      </div>
     </div>
+
+    <div class="section-title">2. Thông tin đăng ký</div>
+    <form id="regForm" onsubmit="handleSubmit(event)">
+      <div class="form-group">
+        <label>Họ và tên *</label>
+        <input type="text" id="hoTen" placeholder="Ví dụ: Trần Minh Mẫn" required>
+      </div>
+
+      <div class="form-group">
+        <label>Số điện thoại (Zalo nhận thông tin) *</label>
+        <input type="tel" id="soDienThoai" placeholder="Ví dụ: 0909099099" pattern="[0-9]{10}" required>
+      </div>
+
+      <div class="form-group">
+        <label>Địa chỉ Email *</label>
+        <input type="email" id="email" placeholder="Ví dụ: tranminhman@gmail.com" required>
+      </div>
+
+      <!-- Ẩn/Hiện linh hoạt theo combo -->
+      <div class="form-group hidden" id="groupDiaChi">
+        <label>Địa chỉ nhận mẫu thực hành (Gói 2) *</label>
+        <input type="text" id="diaChiGiaoHang" placeholder="Số nhà, tên đường, phường/xã, quận/huyện...">
+      </div>
+
+      <button type="submit" class="btn-submit" id="submitBtn">ĐĂNG KÝ VÀ THANH TOÁN</button>
+    </form>
   </div>
 
-  <!-- Modal Thanh Toán -->
-  <div id="paymentModal">
-    <div class="modal-content">
-      <h3 style="color: var(--primary);">QUÉT MÃ QR THANH TOÁN</h3>
-      <p style="font-size: 14px; margin-top: 4px;">Mở ứng dụng ngân hàng bất kỳ để quét mã</p>
+  <!-- POPUP VIETQR -->
+  <div class="modal-overlay" id="qrModal">
+    <div class="modal-box">
+      <h3 style="color: var(--primary);">Quét mã để thanh toán</h3>
+      <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Mở App ngân hàng bất kỳ để quét mã QR</p>
       
-      <img id="qrImage" class="qr-img" src="" alt="Mã VietQR">
-
-      <div class="bank-info">
-        <p><strong>Ngân hàng:</strong> <span id="txtBank">Techcombank</span></p>
-        <p><strong>Số tài khoản:</strong> <span id="txtSTK" style="font-weight: bold; color: var(--primary);">19022423550011</span></p>
-        <p><strong>Chủ tài khoản:</strong> <span id="txtOwner">HO HOANG HIEU</span></p>
-        <p><strong>Số tiền:</strong> <span id="txtAmount" style="font-weight: bold; color: var(--accent);">0đ</span></p>
-        <p><strong>Nội dung CK:</strong> <span id="txtMemo" style="font-weight: bold; color: #DC2626; font-size: 15px;"></span></p>
+      <img src="" alt="Mã VietQR" id="qrImage" class="qr-img">
+      
+      <div class="payment-details">
+        <div><strong>Ngân hàng:</strong> Techcombank (TCB)</div>
+        <div><strong>Số tài khoản:</strong> 19022423550011</div>
+        <div><strong>Chủ tài khoản:</strong> HỒ HOÀNG HIẾU</div>
+        <div><strong>Số tiền:</strong> <span id="txtGiaTien" style="color: var(--accent); font-weight: bold;"></span></div>
+        <div><strong>Nội dung CK:</strong> <span id="txtNoiDung" style="color: var(--primary); font-weight: bold;"></span></div>
       </div>
-      <p style="font-size: 12px; color: #64748B; margin-bottom: 12px;">* Hệ thống tự động ghi nhận ngay sau khi bạn hoàn tất chuyển khoản.</p>
-      <button class="btn-paid" id="btnConfirmPaid" onclick="confirmPayment()">TÔI ĐÃ THANH TOÁN THÀNH CÔNG</button>
+
+      <button class="btn-done" onclick="finishPayment()">TÔI ĐÃ CHUYỂN KHOẢN</button>
     </div>
   </div>
 
   <script>
-    // DÁN LINK GOOGLE APPS SCRIPT CỦA BẠN VÀO ĐÂY:
-    const API_URL = "https://script.google.com/macros/s/AKfycbwrv20OVl3RPBIklW83vEXKY3ya1WDXf0ZiWzRARhUddT3fQJkyqidieTTpkZsmZkE/exec";
+    // URL Google Apps Script sau khi anh Deploy Web App
+    const SCRIPT_URL = "DÁN_WEB_APP_URL_TẠI_ĐÂY";
 
-    let selectedGoi = { id: 'CB01', price: 369000, needAddress: false };
-    let currentOrder = null;
+    let selectedCombo = {
+      id: 1,
+      name: "Nấm Phố: Tự Chủ Nấm Sạch Tại Nhà (không combo thực hành)",
+      price: 350000
+    };
 
-    // Đọc mã ref đối tác từ URL (?ref=tt)
-    const urlParams = new URLSearchParams(window.location.search);
-    const refCode = urlParams.get('ref') || '';
-
-    function selectCombo(id, price, needAddress, elem) {
-      selectedGoi = { id, price, needAddress };
-      document.querySelectorAll('.combo-item').forEach(el => el.classList.remove('selected'));
-      elem.classList.add('selected');
+    // Hàm chọn gói combo
+    function selectCombo(id, price, name) {
+      selectedCombo = { id, price, name };
+      const cards = document.querySelectorAll('.combo-card');
+      cards[0].classList.toggle('active', id === 1);
+      cards[1].classList.toggle('active', id === 2);
 
       const groupDiaChi = document.getElementById('groupDiaChi');
-      const inputDiaChi = document.getElementById('diaChi');
-      if (needAddress) {
-        groupDiaChi.style.display = 'block';
-        inputDiaChi.required = true;
+      const inputDiaChi = document.getElementById('diaChiGiaoHang');
+      if (id === 2) {
+        groupDiaChi.classList.remove('hidden');
+        inputDiaChi.setAttribute('required', 'required');
       } else {
-        groupDiaChi.style.display = 'none';
-        inputDiaChi.required = false;
-        inputDiaChi.value = '';
+        groupDiaChi.classList.add('hidden');
+        inputDiaChi.removeAttribute('required');
       }
     }
 
-    document.getElementById('regForm').addEventListener('submit', async function(e) {
+    // Hàm bỏ dấu tiếng Việt chuẩn
+    function removeVietnameseTones(str) {
+      str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
+      str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
+      str = str.replace(/ì|í|ị|ỉ|ĩ/g, "i");
+      str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, "o");
+      str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u");
+      str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y");
+      str = str.replace(/đ/g, "d");
+      return str;
+    }
+
+    // Tạo mã chuyển khoản: chữ cái đầu không dấu + SĐT (VD: tmm0909099099)
+    function generateTransferContent(fullName, phone) {
+      const cleanName = removeVietnameseTones(fullName.trim().toLowerCase());
+      const words = cleanName.split(/\s+/);
+      const initials = words.map(w => w.charAt(0)).join('');
+      return initials + phone.trim();
+    }
+
+    // Xử lý nộp form
+    async function handleSubmit(e) {
       e.preventDefault();
-      const btn = document.getElementById('btnSubmit');
-      btn.disabled = true;
-      btn.innerText = "Đang kết nối cổng thanh toán...";
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Đang xử lý...";
+
+      const hoTen = document.getElementById('hoTen').value;
+      const soDienThoai = document.getElementById('soDienThoai').value;
+      const email = document.getElementById('email').value;
+      const diaChiGiaoHang = document.getElementById('diaChiGiaoHang').value;
+      
+      // Đọc mã CTV từ URL param ?ref=...
+      const urlParams = new URLSearchParams(window.location.search);
+      const maDoiTac = urlParams.get('ref') || "";
+
+      const noiDungCK = generateTransferContent(hoTen, soDienThoai);
 
       const payload = {
-        action: "register",
-        hoTen: document.getElementById('hoTen').value.trim(),
-        sdt: document.getElementById('sdt').value.trim(),
-        email: document.getElementById('email').value.trim(),
-        diaChi: document.getElementById('diaChi').value.trim(),
-        maGoi: selectedGoi.id,
-        ref: refCode
+        hoTen,
+        soDienThoai,
+        email,
+        diaChiGiaoHang,
+        goiKhoaHoc: selectedCombo.name,
+        giaTien: selectedCombo.price,
+        noiDungCK,
+        maDoiTac
       };
 
       try {
-        const res = await fetch(API_URL, {
+        // Gửi ngầm dữ liệu về Google Sheets API
+        fetch(SCRIPT_URL, {
           method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
-        const data = await res.json();
+
+        // Tạo VietQR chuẩn Napas qua API công khai VietQR
+        const qrUrl = `https://img.vietqr.io/image/TCB-19022423550011-compact2.png?amount=${selectedCombo.price}&addInfo=${encodeURIComponent(noiDungCK)}&accountName=HO%20HOANG%20HIEU`;
         
-        if (data.status === "success") {
-          currentOrder = data;
-          document.getElementById('qrImage').src = data.qrUrl;
-          document.getElementById('txtBank').innerText = data.nganHang;
-          document.getElementById('txtSTK').innerText = data.soTaiKhoan;
-          document.getElementById('txtOwner').innerText = data.chuTaiKhoan;
-          document.getElementById('txtAmount').innerText = data.soTien.toLocaleString('vi-VN') + " đ";
-          document.getElementById('txtMemo').innerText = data.noiDungCK;
-          
-          document.getElementById('paymentModal').style.display = 'flex';
-        } else {
-          alert("Lỗi: " + data.message);
-        }
+        document.getElementById('qrImage').src = qrUrl;
+        document.getElementById('txtGiaTien').innerText = selectedCombo.price.toLocaleString('vi-VN') + " VNĐ";
+        document.getElementById('txtNoiDung').innerText = noiDungCK;
+
+        // Bật Modal QR
+        document.getElementById('qrModal').style.display = 'flex';
       } catch (err) {
-        alert("Lỗi kết nối máy chủ! Vui lòng thử lại sau.");
+        alert("Có lỗi xảy ra khi xử lý thông tin, vui lòng thử lại!");
       } finally {
-        btn.disabled = false;
-        btn.innerText = "ĐĂNG KÝ VÀ THANH TOÁN";
+        submitBtn.disabled = false;
+        submitBtn.innerText = "ĐĂNG KÝ VÀ THANH TOÁN";
       }
-    });
+    }
 
-    async function confirmPayment() {
-      if (!currentOrder) return;
-      const btn = document.getElementById('btnConfirmPaid');
-      btn.disabled = true;
-      btn.innerText = "Đang ghi nhận...";
-
-      try {
-        const res = await fetch(API_URL, {
-          method: 'POST',
-          body: JSON.stringify({ action: "confirm_payment", maDon: currentOrder.maDon })
-        });
-        const data = await res.json();
-        alert("Đã ghi nhận! Ban quản lý sẽ xác thực và gửi link lớp học qua Email cho bạn trong ít phút.");
-        document.getElementById('paymentModal').style.display = 'none';
-        document.getElementById('regForm').reset();
-      } catch (e) {
-        alert("Có lỗi khi cập nhật, nhưng thông tin chuyển tiền của bạn đã được ghi nhận.");
-      }
+    function finishPayment() {
+      alert("Cảm ơn bạn! Ban tổ chức sẽ kiểm tra giao dịch và gửi link lớp học qua Email & Zalo của bạn trong ít phút.");
+      document.getElementById('qrModal').style.display = 'none';
+      document.getElementById('regForm').reset();
+      selectCombo(1, 350000, 'Nấm Phố: Tự Chủ Nấm Sạch Tại Nhà (không combo thực hành)');
     }
   </script>
 </body>
